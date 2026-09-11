@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>A little question…</title>
+<style>
+  :root{
+    --pink:#ff4d88; --pink2:#ff7eb3; --deep:#2b1030; --card:#ffffff;
+    --ink:#3a2340; --muted:#8a6d8f;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; height:100%;}
+  body{
+    font-family:'Poppins','Segoe UI',system-ui,sans-serif;
+    background:linear-gradient(135deg,#ffdde1 0%,#ee9ca7 40%,#ff7eb3 100%);
+    min-height:100dvh; display:flex; align-items:center; justify-content:center;
+    overflow:hidden; position:relative; color:var(--ink);
+  }
+  /* floating hearts bg */
+  .bg-heart{position:fixed; font-size:26px; opacity:.35; animation:float 9s linear infinite; pointer-events:none;}
+  @keyframes float{
+    0%{transform:translateY(110vh) scale(.6) rotate(0deg); opacity:0;}
+    10%{opacity:.4;}
+    90%{opacity:.4;}
+    100%{transform:translateY(-15vh) scale(1.1) rotate(40deg); opacity:0;}
+  }
+  .stage{width:100%; max-width:440px; padding:20px; position:relative; z-index:5;}
+  .card{
+    background:var(--card); border-radius:28px; padding:34px 26px 40px;
+    box-shadow:0 25px 60px -15px rgba(120,20,80,.45);
+    text-align:center; animation:pop .5s cubic-bezier(.2,1.3,.4,1);
+    position:relative; overflow:hidden;
+  }
+  @keyframes pop{from{transform:scale(.85) translateY(20px); opacity:0;} to{transform:scale(1) translateY(0); opacity:1;}}
+  .step{display:none;}
+  .step.active{display:block; animation:pop .45s cubic-bezier(.2,1.3,.4,1);}
+  h1{font-size:26px; margin:6px 0 4px; line-height:1.28;}
+  .sub{color:var(--muted); font-size:14px; margin:0 0 22px;}
+  .emoji{font-size:52px; margin-bottom:6px; display:block;}
+
+  .btn{
+    border:none; border-radius:16px; padding:15px 26px; font-size:17px; font-weight:600;
+    cursor:pointer; font-family:inherit; transition:transform .15s, box-shadow .2s; margin:7px;
+  }
+  .btn-yes{background:linear-gradient(135deg,var(--pink),var(--pink2)); color:#fff;
+    box-shadow:0 10px 22px -6px rgba(255,77,136,.7);}
+  .btn-yes:hover{transform:translateY(-2px) scale(1.04);}
+  .btn-yes:active{transform:scale(.97);}
+  .btn-no{background:#f0e6f2; color:#a98aad;}
+  .row{display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:4px;}
+
+  /* runaway no button */
+  #noBtn{position:relative; transition:transform .12s ease;}
+
+  /* option grid */
+  .grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:18px;}
+  .opt{
+    background:#fff; border:2px solid #ffe0ec; border-radius:20px; padding:16px 10px;
+    cursor:pointer; transition:transform .15s, border-color .2s, box-shadow .2s; text-align:center;
+  }
+  .opt:hover{transform:translateY(-3px); border-color:var(--pink); box-shadow:0 12px 24px -10px rgba(255,77,136,.5);}
+  .opt .ico{font-size:40px; display:block; margin-bottom:8px;}
+  .opt .lbl{font-weight:600; font-size:15px;}
+  .opt .tag{display:inline-block; margin-top:6px; font-size:11px; font-weight:700; color:#fff;
+    background:linear-gradient(135deg,#ffb300,#ff7043); padding:2px 8px; border-radius:20px;}
+
+  .drinkgrid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:18px;}
+  .drink{
+    background:#fff; border:2px solid #ffe0ec; border-radius:20px; padding:14px 8px 12px;
+    cursor:pointer; transition:transform .15s, border-color .2s, box-shadow .2s;
+  }
+  .drink:hover{transform:translateY(-3px); border-color:var(--pink); box-shadow:0 12px 24px -10px rgba(255,77,136,.5);}
+  .drink img{width:100%; height:110px; object-fit:contain; border-radius:12px; background:#faf3f7;}
+  .drink .lbl{font-weight:600; font-size:14px; margin-top:8px;}
+  .drink .star{display:block; font-size:11px; font-weight:700; color:#e6003c; margin-top:2px;}
+
+  .backlink{display:inline-block; margin-top:16px; color:var(--muted); font-size:13px; cursor:pointer; text-decoration:underline;}
+
+  .final .emoji{font-size:64px; animation:beat 1s infinite;}
+  @keyframes beat{0%,100%{transform:scale(1);}30%{transform:scale(1.18);}}
+  .summary{background:#fff5f9; border-radius:18px; padding:16px; margin-top:18px; text-align:left; font-size:15px; line-height:1.9;}
+  .summary b{color:var(--pink);}
+
+  .place-card{margin-top:16px; background:#fff5f9; border-radius:18px; padding:18px; text-align:left;}
+  .place-card h3{margin:0 0 4px; color:var(--pink);}
+  .place-card p{margin:2px 0; font-size:14px; color:var(--ink);}
+  .map-btn{display:inline-block; margin-top:12px; background:linear-gradient(135deg,var(--pink),var(--pink2));
+    color:#fff; text-decoration:none; padding:11px 20px; border-radius:14px; font-weight:600; font-size:15px;}
+
+  .confetti{position:fixed; top:-10px; width:10px; height:14px; opacity:.9; z-index:20; pointer-events:none;}
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="card">
+
+    <!-- STEP 1: the question -->
+    <div class="step active" id="step1">
+      <span class="emoji">🥺💗</span>
+      <h1>Do you want to go for a drink with me?</h1>
+      <p class="sub">Sochna mat… bas dil se batao 😄</p>
+      <div class="row">
+        <button class="btn btn-yes" onclick="go('step2')">Yes 💕</button>
+        <button class="btn btn-no" id="noBtn">No</button>
+      </div>
+      <p class="sub" id="teaseMsg" style="margin-top:14px; height:18px; color:var(--pink); font-weight:600;"></p>
+    </div>
+
+    <!-- STEP 2: how do we go -->
+    <div class="step" id="step2">
+      <span class="emoji">🚗</span>
+      <h1>Yaaay! Ab bata… <br>hum date pe kaise chalein?</h1>
+      <p class="sub">Apni sawaari choose karo 👇</p>
+      <div class="grid">
+        <div class="opt" onclick="pick('ride','Car 🚗','step3')"><span class="ico">🚗</span><span class="lbl">Car</span></div>
+        <div class="opt" onclick="pick('ride','Cycle 🚲','step3')"><span class="ico">🚲</span><span class="lbl">Cycle</span></div>
+        <div class="opt" onclick="pick('ride','Ghoda-gaadi 🐎','step3')"><span class="ico">🐎</span><span class="lbl">Ghoda Gaadi</span></div>
+        <div class="opt" onclick="pick('ride','Paidal 🚶‍♀️','step3')"><span class="ico">🚶‍♀️</span><span class="lbl">Paidal</span></div>
+      </div>
+    </div>
+
+    <!-- STEP 3: what drink -->
+    <div class="step" id="step3">
+      <span class="emoji">🍸</span>
+      <h1>Nice choice! <br>Ab drink kaunsi pasand hai?</h1>
+      <p class="sub">Pick your poison 😌</p>
+      <div class="grid">
+        <div class="opt" onclick="pick('drink','Whisky 🥃','step_beer_check','Whisky')"><span class="ico">🥃</span><span class="lbl">Whisky</span></div>
+        <div class="opt" onclick="pick('drink','Wine 🍷','step_beer_check','Wine')"><span class="ico">🍷</span><span class="lbl">Wine</span></div>
+        <div class="opt" onclick="pick('drink','Beer 🍺','step_beer_check','Beer')"><span class="ico">🍺</span><span class="lbl">Beer</span></div>
+        <div class="opt" onclick="pick('drink','Vodka 🍸','step_beer_check','Vodka')"><span class="ico">🍸</span><span class="lbl">Vodka</span></div>
+      </div>
+    </div>
+
+    <!-- STEP 4: beer options (only if beer) -->
+    <div class="step" id="step4">
+      <span class="emoji">🍻</span>
+      <h1>Beer lover! 😍<br>Kaunsi beer?</h1>
+      <p class="sub">Budweiser Magnum sabse upar rakha hai, bilkul aapke jaisa — top choice 😉</p>
+      <div class="drinkgrid">
+        <div class="drink" onclick="pickBeer('Budweiser Magnum 👑')">
+          <img alt="Budweiser Magnum" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Budweiser_logo.svg/240px-Budweiser_logo.svg.png"
+               onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22160%22 height=%22160%22><rect width=%22160%22 height=%22160%22 fill=%22%23e30613%22/><text x=%2280%22 y=%2275%22 font-size=%2220%22 fill=%22white%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-weight=%22bold%22>BUD</text><text x=%2280%22 y=%22100%22 font-size=%2216%22 fill=%22white%22 text-anchor=%22middle%22 font-family=%22sans-serif%22>MAGNUM</text></svg>'">
+          <div class="lbl">Budweiser Magnum</div><span class="star">⭐ 100% Recommended</span>
+        </div>
+        <div class="drink" onclick="pickBeer('Kingfisher 🍺')">
+          <img alt="Kingfisher" src="https://upload.wikimedia.org/wikipedia/en/thumb/6/6e/Kingfisher_%28beer%29_logo.svg/240px-Kingfisher_%28beer%29_logo.svg.png"
+               onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22160%22 height=%22160%22><rect width=%22160%22 height=%22160%22 fill=%22%23d81e05%22/><text x=%2280%22 y=%2288%22 font-size=%2218%22 fill=%22white%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-weight=%22bold%22>Kingfisher</text></svg>'">
+          <div class="lbl">Kingfisher</div>
+        </div>
+        <div class="drink" onclick="pickBeer('Corona 🌊')">
+          <img alt="Corona" src="data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22160%22 height=%22160%22><rect width=%22160%22 height=%22160%22 fill=%22%23f4d03f%22/><text x=%2280%22 y=%2288%22 font-size=%2222%22 fill=%22%23234%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-weight=%22bold%22>Corona</text></svg>">
+          <div class="lbl">Corona</div>
+        </div>
+        <div class="drink" onclick="pickBeer('Heineken 🟢')">
+          <img alt="Heineken" src="data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22160%22 height=%22160%22><rect width=%22160%22 height=%22160%22 fill=%22%23007a33%22/><text x=%2280%22 y=%2288%22 font-size=%2220%22 fill=%22white%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-weight=%22bold%22>Heineken</text></svg>">
+          <div class="lbl">Heineken</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 5: place -->
+    <div class="step" id="step5">
+      <span class="emoji">📍</span>
+      <h1>Perfect! Aur ab… <br>date kahan?</h1>
+      <div class="place-card">
+        <h3>🍷 Vintage Wine, Sector 18</h3>
+        <p>📍 Near Hyatt Hotel, Sector 18</p>
+        <p>🕗 Aaj shaam, sirf hum dono 💕</p>
+        <a class="map-btn" target="_blank"
+           href="https://www.google.com/maps/search/Vintage+Wine+Sector+18+near+Hyatt+Hotel">Open in Maps 🗺️</a>
+      </div>
+      <button class="btn btn-yes" style="margin-top:20px;" onclick="finish()">It's a date! 💖</button>
+    </div>
+
+    <!-- STEP 6: final -->
+    <div class="step final" id="step6">
+      <span class="emoji">💖</span>
+      <h1>Yaay! It's a date! 🥳</h1>
+      <p class="sub">Main already excited hoon 😍</p>
+      <div class="summary" id="summaryBox"></div>
+      <p class="sub" style="margin-top:16px;">See you soon, cutie 😘</p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const choices = {ride:'', drink:'', beer:''};
+
+  // floating hearts background
+  const hearts=['💗','💕','💖','💘','🌸','✨'];
+  setInterval(()=>{
+    const h=document.createElement('div');
+    h.className='bg-heart';
+    h.textContent=hearts[Math.floor(Math.random()*hearts.length)];
+    h.style.left=Math.random()*100+'vw';
+    h.style.animationDuration=(7+Math.random()*6)+'s';
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),13000);
+  },700);
+
+  function go(id){
+    document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function pick(key,label,next,raw){
+    choices[key]=label;
+    if(key==='drink' && raw==='Beer'){ go('step4'); return; }
+    go(next);
+  }
+  function pickBeer(label){ choices.beer=label; go('step5'); }
+
+  // handle drink -> beer routing via a tiny wrapper step id
+  // (step_beer_check is virtual; handled inside pick())
+
+  function finish(){
+    const s=document.getElementById('summaryBox');
+    s.innerHTML =
+      '🚀 Sawaari: <b>'+(choices.ride||'—')+'</b><br>'+
+      '🍹 Drink: <b>'+(choices.drink||'—')+'</b>'+
+      (choices.beer? '<br>🍺 Beer: <b>'+choices.beer+'</b>':'')+
+      '<br>📍 Jagah: <b>Vintage Wine, Sec 18 (near Hyatt)</b>';
+    go('step6');
+    burst();
+  }
+
+  function burst(){
+    const colors=['#ff4d88','#ff7eb3','#ffb300','#7c4dff','#00c2a8','#ff5252'];
+    for(let i=0;i<80;i++){
+      const c=document.createElement('div');
+      c.className='confetti';
+      c.style.left=Math.random()*100+'vw';
+      c.style.background=colors[Math.floor(Math.random()*colors.length)];
+      c.style.transform='rotate('+Math.random()*360+'deg)';
+      const dur=2.5+Math.random()*2;
+      c.animate([{top:'-10px',opacity:1},{top:'105vh',opacity:.9}],{duration:dur*1000,easing:'ease-in'});
+      document.body.appendChild(c);
+      setTimeout(()=>c.remove(),dur*1000+100);
+    }
+  }
+
+  /* ---- the runaway NO button ---- */
+  const noBtn=document.getElementById('noBtn');
+  const tease=document.getElementById('teaseMsg');
+  const lines=['Areee ruko! 🙈','No allowed nahi hai 😤','Nice try 😏','Phir se socho 💭','Yes hi press karo na 🥺','Bhaagne do mat 😂'];
+  let teaseI=0;
+  function runAway(){
+    const card=noBtn.closest('.card').getBoundingClientRect();
+    const maxX=Math.min(window.innerWidth,card.right)-card.left-noBtn.offsetWidth-30;
+    const maxY=window.innerHeight-160;
+    const x=(Math.random()*maxX)-(maxX/2);
+    const y=(Math.random()*120)-40;
+    noBtn.style.transform='translate('+x+'px,'+y+'px)';
+    tease.textContent=lines[teaseI % lines.length]; teaseI++;
+  }
+  noBtn.addEventListener('mouseenter',runAway);
+  noBtn.addEventListener('click',(e)=>{e.preventDefault(); runAway();});
+  // touch devices: move on tap-attempt
+  noBtn.addEventListener('touchstart',(e)=>{e.preventDefault(); runAway();},{passive:false});
+</script>
+</body>
+</html>
